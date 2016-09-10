@@ -2,6 +2,7 @@
 
 const https = require('https');
 const url = require('url');
+const querystring = require('querystring');
 
 const Promise = require('bluebird');
 
@@ -66,8 +67,14 @@ HttpTransport.prototype.request = Promise.coroutine(function* ({
 }) {
     const parsedUrl = url.parse(apiUrl);
 
+    const pathQueryString = querystring.encode(params);
+
+    const resolvedPath = `${path}?${pathQueryString}`;
+
     const requestArgs = {
-        path, headers, host: parsedUrl.host
+        headers,
+        path: resolvedPath,
+        host: parsedUrl.host
     };
 
     return yield* this._safeRequest(requestArgs);
